@@ -10,17 +10,8 @@ h1 {
 }
 
 #map {
-    height: 600px; /* Ensure proper height for the map */
-    width: 100%;   /* Full width of the page */
+    height: 600px;
+    width: 100%;
     margin: 20px 0;
-    border: 1px solid #ccc; /* Optional border for clarity */
-}
-
-#frequency-container {
-    margin: 20px 0;
-}
-
-#bar-chart {
-    width: 80%; /* Centered bar chart */
-    margin: 0 auto;
+    border: 1px solid #ccc;
 }

@@ -11,15 +11,13 @@ setTimeout(() => {
     map.invalidateSize();
 }, 500);
 
-// Load GeoJSON for State Boundaries
+// GeoJSON URL
 let geojsonUrl = "data/us-states.json";
-let geojsonLayer;
 
 // Dropdown Data
 const metricFiles = [
     { name: "Sample Size", file: "data/Sample Size.csv" }
 ];
-const frequencyFile = "data/Frequency_Distribution.csv";
 
 // Populate Metric Dropdown
 const metricSelect = document.getElementById("metric-select");
@@ -31,38 +29,54 @@ metricFiles.forEach((metric) => {
 });
 
 // Update Map Based on Selected Metric
-// Update Map Based on Selected Metric
-// Load and map CSV data
 function updateMap() {
     const metricFile = metricSelect.value;
 
+    console.log("Selected Metric File:", metricFile);
+
+    // Fetch Metric File
     fetch(metricFile)
-        .then((response) => response.text())
+        .then((response) => {
+            if (!response.ok) throw new Error(`Failed to load ${metricFile}: ${response.status}`);
+            return response.text();
+        })
         .then((data) => {
-            // Parse CSV data
+            console.log("Raw Metric Data:", data);
+
+            // Parse CSV
             const rows = data.split("\n").slice(1); // Skip header
             const metricData = {};
             rows.forEach((row) => {
                 const [state, value] = row.split(",");
-                metricData[state.trim()] = parseFloat(value.trim());
+                if (state && value) {
+                    metricData[state.trim()] = parseFloat(value.trim());
+                }
             });
 
-            // Fetch GeoJSON and map data
-            fetch(geojsonUrl)
-                .then((response) => response.json())
+            console.log("Parsed Metric Data:", metricData);
+
+            // Fetch GeoJSON
+            return fetch(geojsonUrl)
+                .then((response) => {
+                    if (!response.ok) throw new Error(`Failed to load GeoJSON: ${response.status}`);
+                    return response.json();
+                })
                 .then((geojson) => {
+                    console.log("GeoJSON Data:", geojson);
+
+                    // Update Map Layer
                     if (geojsonLayer) map.removeLayer(geojsonLayer);
 
                     geojsonLayer = L.geoJson(geojson, {
                         style: (feature) => {
                             const value = metricData[feature.properties.name];
                             return {
-                                fillColor: getColor(value),
+                                fillColor: value ? getColor(value) : "#FFFFFF",
                                 weight: 2,
                                 opacity: 1,
                                 color: "white",
                                 dashArray: "3",
-                                fillOpacity: 0.7,
+                                fillOpacity: value ? 0.7 : 0.2,
                             };
                         },
                         onEachFeature: (feature, layer) => {
@@ -73,12 +87,11 @@ function updateMap() {
                         },
                     }).addTo(map);
                 });
+        })
+        .catch((error) => {
+            console.error("Error loading data:", error);
         });
 }
-
-// Initialize the map and setup events
-updateMap();
-metricSelect.addEventListener("change", updateMap);
 
 // Helper Function: Get Color for Choropleth
 function getColor(value) {
@@ -99,66 +112,6 @@ function getColor(value) {
         : "#FFEDA0";
 }
 
-// Populate State and Frequency Dropdowns
-const stateSelect = document.getElementById("state-select");
-const frequencySelect = document.getElementById("frequency-select");
-
-fetch(frequencyFile)
-    .then((response) => response.text())
-    .then((data) => {
-        const rows = data.split("\n");
-        const header = rows[0].split(","); // First row
-        const states = rows.slice(1).map((row) => row.split(",")[0]);
-        const frequencies = header.slice(1).map((col) => col.split(":")[0]); // Extract frequencies
-
-        // Populate State Dropdown
-        states.forEach((state) => {
-            let option = document.createElement("option");
-            option.value = state.trim();
-            option.textContent = state.trim();
-            stateSelect.appendChild(option);
-        });
-
-        // Populate Frequency Dropdown
-        [...new Set(frequencies)].forEach((frequency) => {
-            let option = document.createElement("option");
-            option.value = frequency.trim();
-            option.textContent = frequency.trim();
-            frequencySelect.appendChild(option);
-        });
-    });
-
-// Update Bar Chart Based on Selections
-function updateBarChart() {
-    const state = stateSelect.value;
-    const frequency = frequencySelect.value;
-
-    fetch(frequencyFile)
-        .then((response) => response.text())
-        .then((data) => {
-            const rows = data.split("\n");
-            const header = rows[0].split(",");
-            const stateRow = rows.find((row) => row.startsWith(state));
-            if (!stateRow) return;
-
-            const stateData = stateRow.split(",");
-            const binLabels = header
-                .slice(1)
-                .filter((col) => col.startsWith(`${frequency}:`))
-                .map((col) => col.split(": ")[1]); // Extract bin labels
-            const binValues = stateData
-                .slice(1)
-                .filter((_, index) => header[index + 1].startsWith(`${frequency}:`))
-                .map((value) => parseFloat(value));
-
-            // Render Bar Chart
-            const chartDiv = document.getElementById("bar-chart");
-            Plotly.newPlot(chartDiv, [
-                {
-                    x: binLabels,
-                    y: binValues,
-                    type: "bar",
-                },
-            ]);
-        });
-}
+// Trigger Initial Map Update
+metricSelect.addEventListener("change", updateMap);
+updateMap();

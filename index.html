@@ -14,27 +14,12 @@
 
     <!-- Dropdown for Metric Selection -->
     <label for="metric-select">Select Metric:</label>
-    <select id="metric-select" onchange="updateMap()">
-        <!-- Options populated in script.js -->
+    <select id="metric-select">
+        <!-- Options will be dynamically populated -->
     </select>
 
     <!-- Map Container -->
     <div id="map"></div>
-
-    <!-- Frequency Distribution Section -->
-    <div id="frequency-container">
-        <label for="state-select">Select State:</label>
-        <select id="state-select" onchange="updateBarChart()">
-            <!-- Options populated in script.js -->
-        </select>
-
-        <label for="frequency-select">Select Frequency:</label>
-        <select id="frequency-select" onchange="updateBarChart()">
-            <!-- Options populated in script.js -->
-        </select>
-
-        <div id="bar-chart"></div>
-    </div>
 
     <script src="script.js"></script>
 </body>

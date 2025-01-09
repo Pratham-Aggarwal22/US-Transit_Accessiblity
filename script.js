@@ -7,11 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
         attribution: "Map data © OpenStreetMap contributors",
     }).addTo(map);
 
-    // Force map to refresh its layout
-    setTimeout(() => {
-        map.invalidateSize();
-    }, 500);
-
     // GeoJSON URL
     let geojsonUrl = "data/us-states.json";
     let geojsonLayer;
@@ -26,22 +21,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Populate Metric Dropdown
     function populateDropdown() {
-        if (metricSelect) {
-            metricFiles.forEach((metric) => {
-                let option = document.createElement("option");
-                option.value = metric.file;
-                option.textContent = metric.name;
-                metricSelect.appendChild(option);
-            });
-        } else {
-            console.error("Dropdown element not found.");
+        if (!metricSelect) {
+            console.error("Dropdown element 'metricSelect' not found.");
+            return;
         }
+
+        metricFiles.forEach((metric) => {
+            let option = document.createElement("option");
+            option.value = metric.file;
+            option.textContent = metric.name;
+            metricSelect.appendChild(option);
+        });
     }
 
     // Update Map Based on Selected Metric
     function updateMap() {
-        const metricFile = metricSelect.value;
+        if (!metricSelect) {
+            console.error("Dropdown element 'metricSelect' not found.");
+            return;
+        }
 
+        const metricFile = metricSelect.value;
         console.log("Selected Metric File:", metricFile);
 
         // Fetch Metric File
@@ -58,8 +58,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 const metricData = {};
                 rows.forEach((row) => {
                     const [state, value] = row.split(",");
-                    if (state && value) { // Ensure both state and value exist
+                    if (state && value) {
                         metricData[state.trim()] = parseFloat(value.trim());
+                    } else {
+                        console.error("Invalid row:", row); // Log invalid rows
                     }
                 });
 
@@ -122,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
             : "#FFEDA0";
     }
 
-    // Trigger Initial Map Update
+    // Initialize Dropdown and Map
     populateDropdown();
     metricSelect.addEventListener("change", updateMap);
     updateMap();

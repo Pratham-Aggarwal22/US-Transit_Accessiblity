@@ -7,16 +7,16 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 // Load GeoJSON for State Boundaries
-let geojsonUrl = "data/us-states.json";
+let geojsonUrl = "Data/us-states.json";
 let geojsonLayer;
 
 // Dropdown Data
 const metricFiles = [
-    { name: "Sample Size", file: "data/Sample Size.csv" },
-    { name: "Percent Access", file: "data/Percent Access.csv" },
-    { name: "Average Initial Walking Distance", file: "data/Average Initial Walking Distance.csv" },
+    { name: "Sample Size", file: "Data/Sample Size.csv" },
+    { name: "Percent Access", file: "Data/Percent Access.csv" },
+    { name: "Average Initial Walking Distance", file: "Data/Average Initial Walking Distance.csv" },
 ];
-const frequencyFile = "data/Frequency_Distribution.csv";
+const frequencyFile = "Data/Frequency_Distribution.csv";
 
 // Populate Metric Dropdown
 const metricSelect = document.getElementById("metric-select");

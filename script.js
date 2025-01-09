@@ -32,55 +32,55 @@ metricFiles.forEach((metric) => {
 
 // Update Map Based on Selected Metric
 // Update Map Based on Selected Metric
+// Load and map CSV data
 function updateMap() {
     const metricFile = metricSelect.value;
 
     fetch(metricFile)
         .then((response) => response.text())
         .then((data) => {
+            // Parse CSV data
             const rows = data.split("\n").slice(1); // Skip header
             const metricData = {};
-
             rows.forEach((row) => {
                 const [state, value] = row.split(",");
                 metricData[state.trim()] = parseFloat(value.trim());
             });
 
-            console.log("Loaded Metric Data:", metricData); // Debugging: Check data parsing
-
-            if (geojsonLayer) map.removeLayer(geojsonLayer);
-
-            geojsonLayer = L.geoJson(null, {
-                style: (feature) => {
-                    const value = metricData[feature.properties.name];
-                    return {
-                        fillColor: getColor(value),
-                        weight: 2,
-                        opacity: 1,
-                        color: "white",
-                        dashArray: "3",
-                        fillOpacity: 0.7,
-                    };
-                },
-                onEachFeature: (feature, layer) => {
-                    const value = metricData[feature.properties.name];
-                    layer.bindPopup(
-                        `<b>${feature.properties.name}</b><br>Value: ${value || "No Data"}`
-                    );
-                },
-            });
-
+            // Fetch GeoJSON and map data
             fetch(geojsonUrl)
                 .then((response) => response.json())
                 .then((geojson) => {
-                    console.log("GeoJSON Data:", geojson); // Debugging: Check GeoJSON structure
-                    geojsonLayer.addData(geojson).addTo(map);
+                    if (geojsonLayer) map.removeLayer(geojsonLayer);
+
+                    geojsonLayer = L.geoJson(geojson, {
+                        style: (feature) => {
+                            const value = metricData[feature.properties.name];
+                            return {
+                                fillColor: getColor(value),
+                                weight: 2,
+                                opacity: 1,
+                                color: "white",
+                                dashArray: "3",
+                                fillOpacity: 0.7,
+                            };
+                        },
+                        onEachFeature: (feature, layer) => {
+                            const value = metricData[feature.properties.name];
+                            layer.bindPopup(
+                                `<b>${feature.properties.name}</b><br>Value: ${value || "No Data"}`
+                            );
+                        },
+                    }).addTo(map);
                 });
         });
 }
 
+// Initialize the map and setup events
+updateMap();
+metricSelect.addEventListener("change", updateMap);
 
-// Get Color for Choropleth
+// Helper Function: Get Color for Choropleth
 function getColor(value) {
     return value > 1000
         ? "#800026"

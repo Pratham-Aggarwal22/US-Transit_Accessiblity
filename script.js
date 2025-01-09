@@ -7,7 +7,7 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 // Load GeoJSON for State Boundaries
-let geojsonUrl = "Data/us-states.json";
+let geojsonUrl = "data/us-states.json";
 let geojsonLayer;
 
 // Dropdown Data
@@ -16,7 +16,7 @@ const metricFiles = [
     { name: "Percent Access", file: "data/Percent Access.csv" },
     { name: "Average Initial Walking Distance", file: "data/Average Initial Walking Distance.csv" },
 ];
-const frequencyFile = "Data/Frequency_Distribution.csv";
+const frequencyFile = "data/Frequency_Distribution.csv";
 
 // Populate Metric Dropdown
 const metricSelect = document.getElementById("metric-select");

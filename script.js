@@ -16,7 +16,7 @@ const metricFiles = [
     { name: "Percent Access", file: "data/Percent Access.csv" },
     { name: "Average Initial Walking Distance", file: "data/Average Initial Walking Distance.csv" },
 ];
-const frequencyFile = "data/Frequency Distribution.csv";
+const frequencyFile = "data/Frequency_Distribution.csv";
 
 // Populate Metric Dropdown
 const metricSelect = document.getElementById("metric-select");

@@ -31,6 +31,7 @@ metricFiles.forEach((metric) => {
 });
 
 // Update Map Based on Selected Metric
+// Update Map Based on Selected Metric
 function updateMap() {
     const metricFile = metricSelect.value;
 
@@ -39,12 +40,16 @@ function updateMap() {
         .then((data) => {
             const rows = data.split("\n").slice(1); // Skip header
             const metricData = {};
+
             rows.forEach((row) => {
                 const [state, value] = row.split(",");
                 metricData[state.trim()] = parseFloat(value.trim());
             });
 
+            console.log("Loaded Metric Data:", metricData); // Debugging: Check data parsing
+
             if (geojsonLayer) map.removeLayer(geojsonLayer);
+
             geojsonLayer = L.geoJson(null, {
                 style: (feature) => {
                     const value = metricData[feature.properties.name];
@@ -64,13 +69,16 @@ function updateMap() {
                     );
                 },
             });
+
             fetch(geojsonUrl)
                 .then((response) => response.json())
                 .then((geojson) => {
+                    console.log("GeoJSON Data:", geojson); // Debugging: Check GeoJSON structure
                     geojsonLayer.addData(geojson).addTo(map);
                 });
         });
 }
+
 
 // Get Color for Choropleth
 function getColor(value) {

@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>US Accessibility Dashboard</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.3/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.18.2.min.js"></script>
 </head>
 <body>
@@ -14,22 +15,22 @@
     <!-- Dropdown for Metric Selection -->
     <label for="metric-select">Select Metric:</label>
     <select id="metric-select" onchange="updateMap()">
-        <!-- Options will be dynamically populated by script.js -->
+        <!-- Options populated in script.js -->
     </select>
 
     <!-- Map Container -->
     <div id="map"></div>
 
-    <!-- Dropdown and Bar Chart for Frequency Distribution -->
+    <!-- Frequency Distribution Section -->
     <div id="frequency-container">
         <label for="state-select">Select State:</label>
         <select id="state-select" onchange="updateBarChart()">
-            <!-- Options will be dynamically populated by script.js -->
+            <!-- Options populated in script.js -->
         </select>
 
         <label for="frequency-select">Select Frequency:</label>
         <select id="frequency-select" onchange="updateBarChart()">
-            <!-- Options will be dynamically populated by script.js -->
+            <!-- Options populated in script.js -->
         </select>
 
         <div id="bar-chart"></div>

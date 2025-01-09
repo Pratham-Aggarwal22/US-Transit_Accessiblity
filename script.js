@@ -6,6 +6,11 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "Map data © OpenStreetMap contributors",
 }).addTo(map);
 
+// Force map to refresh its layout
+setTimeout(() => {
+    map.invalidateSize();
+}, 500);
+
 // Load GeoJSON for State Boundaries
 let geojsonUrl = "data/us-states.json";
 let geojsonLayer;
@@ -32,7 +37,6 @@ function updateMap() {
     fetch(metricFile)
         .then((response) => response.text())
         .then((data) => {
-            // Parse CSV
             const rows = data.split("\n").slice(1); // Skip header
             const metricData = {};
             rows.forEach((row) => {
@@ -40,7 +44,6 @@ function updateMap() {
                 metricData[state.trim()] = parseFloat(value.trim());
             });
 
-            // Update GeoJSON Layer
             if (geojsonLayer) map.removeLayer(geojsonLayer);
             geojsonLayer = L.geoJson(null, {
                 style: (feature) => {
